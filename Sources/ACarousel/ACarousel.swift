@@ -1,3 +1,23 @@
+/**
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+ */
+
 import SwiftUI
 import Combine
 
@@ -32,21 +52,19 @@ public struct ACarousel<Data, Content> : View where Data : RandomAccessCollectio
     }
     
     private func generateContent(proxy: GeometryProxy) -> some View {
-        return ZStack(alignment: .topLeading) {
-            HStack(spacing: spacing) {
-                ForEach(data) {
-                    content($0)
-                        .frame(width: itemWidth(proxy), height: itemHeight(proxy, $0))
-                }
+        HStack(spacing: spacing) {
+            ForEach(data) {
+                content($0)
+                    .frame(width: itemWidth(proxy), height: itemHeight(proxy, $0))
             }
-            .offset(x: offsetValue(proxy))
-            .gesture(dragGesture(proxy))
-            .animation(offsetAnimation)
-            .onReceive(timer: timer, perform: receiveTimer)
-            .onReceiveAppLifeCycle { aState.isTimerActive = $0 }
-            .onReceive(aState.$activeItem) { _ in
-                offsetChanged(offsetValue(proxy), proxy: proxy)
-            }
+        }
+        .offset(x: offsetValue(proxy))
+        .gesture(dragGesture(proxy))
+        .animation(offsetAnimation)
+        .onReceive(timer: timer, perform: receiveTimer)
+        .onReceiveAppLifeCycle { aState.isTimerActive = $0 }
+        .onReceive(aState.$activeItem) { _ in
+            offsetChanged(offsetValue(proxy), proxy: proxy)
         }
     }
     

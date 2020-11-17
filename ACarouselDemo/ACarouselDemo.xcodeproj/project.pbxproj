@@ -7,22 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EDC9AF3A2563982100321BC0 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC9AF392563982100321BC0 /* Test.swift */; };
+		EDC9AF3F2563A19300321BC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EDF64C97256241320050A86D /* Assets.xcassets */; };
 		EDF64C92256241310050A86D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64C91256241310050A86D /* AppDelegate.swift */; };
 		EDF64C94256241310050A86D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64C93256241310050A86D /* SceneDelegate.swift */; };
 		EDF64C96256241310050A86D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64C95256241310050A86D /* ContentView.swift */; };
 		EDF64C98256241320050A86D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EDF64C97256241320050A86D /* Assets.xcassets */; };
 		EDF64C9B256241320050A86D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EDF64C9A256241320050A86D /* Preview Assets.xcassets */; };
 		EDF64C9E256241320050A86D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EDF64C9C256241320050A86D /* LaunchScreen.storyboard */; };
-		EDF64CAB256241520050A86D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64CAA256241520050A86D /* AppDelegate.swift */; };
-		EDF64CAF256241520050A86D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EDF64CAE256241520050A86D /* Assets.xcassets */; };
-		EDF64CB2256241520050A86D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EDF64CB1256241520050A86D /* Preview Assets.xcassets */; };
-		EDF64CB5256241520050A86D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EDF64CB3256241520050A86D /* Main.storyboard */; };
-		EDF64D3A25625B220050A86D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64C95256241310050A86D /* ContentView.swift */; };
 		EDF64D3F25625B300050A86D /* ACarousel in Frameworks */ = {isa = PBXBuildFile; productRef = EDF64D3E25625B300050A86D /* ACarousel */; };
-		EDF64D4125625B370050A86D /* ACarousel in Frameworks */ = {isa = PBXBuildFile; productRef = EDF64D4025625B370050A86D /* ACarousel */; };
+		EDF64D5D256380F10050A86D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64D5C256380F10050A86D /* AppDelegate.swift */; };
+		EDF64D64256380F10050A86D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EDF64D63256380F10050A86D /* Preview Assets.xcassets */; };
+		EDF64D67256380F10050A86D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EDF64D65256380F10050A86D /* Main.storyboard */; };
+		EDF64D70256381410050A86D /* ACarousel in Frameworks */ = {isa = PBXBuildFile; productRef = EDF64D6F256381410050A86D /* ACarousel */; };
+		EDF64DA425638FC50050A86D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64DA325638FC50050A86D /* ContentView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EDC9AF392563982100321BC0 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		EDF64C8E256241310050A86D /* ACarouselDemo iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ACarouselDemo iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDF64C91256241310050A86D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EDF64C93256241310050A86D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -31,14 +33,14 @@
 		EDF64C9A256241320050A86D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		EDF64C9D256241320050A86D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EDF64C9F256241320050A86D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EDF64CA8256241520050A86D /* ACarouselDemo macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ACarouselDemo macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EDF64CAA256241520050A86D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		EDF64CAE256241520050A86D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		EDF64CB1256241520050A86D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		EDF64CB4256241520050A86D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		EDF64CB6256241520050A86D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EDF64CB7256241520050A86D /* ACarouselDemo_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ACarouselDemo_macOS.entitlements; sourceTree = "<group>"; };
 		EDF64D3525625AE10050A86D /* ACarousel */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ACarousel; path = ..; sourceTree = "<group>"; };
+		EDF64D5A256380F10050A86D /* ACarouselDemo macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ACarouselDemo macOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EDF64D5C256380F10050A86D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		EDF64D63256380F10050A86D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		EDF64D66256380F10050A86D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		EDF64D68256380F10050A86D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EDF64D69256380F10050A86D /* ACarouselDemo_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ACarouselDemo_macOS.entitlements; sourceTree = "<group>"; };
+		EDF64DA325638FC50050A86D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,11 +52,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EDF64CA5256241520050A86D /* Frameworks */ = {
+		EDF64D57256380F10050A86D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EDF64D4125625B370050A86D /* ACarousel in Frameworks */,
+				EDF64D70256381410050A86D /* ACarousel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -66,7 +68,7 @@
 			children = (
 				EDF64D3525625AE10050A86D /* ACarousel */,
 				EDF64C90256241310050A86D /* ACarouselDemo iOS */,
-				EDF64CA9256241520050A86D /* ACarouselDemo macOS */,
+				EDF64D5B256380F10050A86D /* ACarouselDemo macOS */,
 				EDF64C8F256241310050A86D /* Products */,
 				EDF64D3D25625B300050A86D /* Frameworks */,
 			);
@@ -76,7 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				EDF64C8E256241310050A86D /* ACarouselDemo iOS.app */,
-				EDF64CA8256241520050A86D /* ACarouselDemo macOS.app */,
+				EDF64D5A256380F10050A86D /* ACarouselDemo macOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -103,32 +105,33 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		EDF64CA9256241520050A86D /* ACarouselDemo macOS */ = {
-			isa = PBXGroup;
-			children = (
-				EDF64CAA256241520050A86D /* AppDelegate.swift */,
-				EDF64CAE256241520050A86D /* Assets.xcassets */,
-				EDF64CB3256241520050A86D /* Main.storyboard */,
-				EDF64CB6256241520050A86D /* Info.plist */,
-				EDF64CB7256241520050A86D /* ACarouselDemo_macOS.entitlements */,
-				EDF64CB0256241520050A86D /* Preview Content */,
-			);
-			path = "ACarouselDemo macOS";
-			sourceTree = "<group>";
-		};
-		EDF64CB0256241520050A86D /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				EDF64CB1256241520050A86D /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
 		EDF64D3D25625B300050A86D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		EDF64D5B256380F10050A86D /* ACarouselDemo macOS */ = {
+			isa = PBXGroup;
+			children = (
+				EDF64D5C256380F10050A86D /* AppDelegate.swift */,
+				EDF64DA325638FC50050A86D /* ContentView.swift */,
+				EDF64D65256380F10050A86D /* Main.storyboard */,
+				EDF64D68256380F10050A86D /* Info.plist */,
+				EDF64D69256380F10050A86D /* ACarouselDemo_macOS.entitlements */,
+				EDF64D62256380F10050A86D /* Preview Content */,
+				EDC9AF392563982100321BC0 /* Test.swift */,
+			);
+			path = "ACarouselDemo macOS";
+			sourceTree = "<group>";
+		};
+		EDF64D62256380F10050A86D /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				EDF64D63256380F10050A86D /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -154,13 +157,13 @@
 			productReference = EDF64C8E256241310050A86D /* ACarouselDemo iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		EDF64CA7256241520050A86D /* ACarouselDemo macOS */ = {
+		EDF64D59256380F10050A86D /* ACarouselDemo macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = EDF64CB8256241520050A86D /* Build configuration list for PBXNativeTarget "ACarouselDemo macOS" */;
+			buildConfigurationList = EDF64D6A256380F10050A86D /* Build configuration list for PBXNativeTarget "ACarouselDemo macOS" */;
 			buildPhases = (
-				EDF64CA4256241520050A86D /* Sources */,
-				EDF64CA5256241520050A86D /* Frameworks */,
-				EDF64CA6256241520050A86D /* Resources */,
+				EDF64D56256380F10050A86D /* Sources */,
+				EDF64D57256380F10050A86D /* Frameworks */,
+				EDF64D58256380F10050A86D /* Resources */,
 			);
 			buildRules = (
 			);
@@ -168,10 +171,10 @@
 			);
 			name = "ACarouselDemo macOS";
 			packageProductDependencies = (
-				EDF64D4025625B370050A86D /* ACarousel */,
+				EDF64D6F256381410050A86D /* ACarousel */,
 			);
 			productName = "ACarouselDemo macOS";
-			productReference = EDF64CA8256241520050A86D /* ACarouselDemo macOS.app */;
+			productReference = EDF64D5A256380F10050A86D /* ACarouselDemo macOS.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +189,7 @@
 					EDF64C8D256241310050A86D = {
 						CreatedOnToolsVersion = 12.1;
 					};
-					EDF64CA7256241520050A86D = {
+					EDF64D59256380F10050A86D = {
 						CreatedOnToolsVersion = 12.1;
 					};
 				};
@@ -205,7 +208,7 @@
 			projectRoot = "";
 			targets = (
 				EDF64C8D256241310050A86D /* ACarouselDemo iOS */,
-				EDF64CA7256241520050A86D /* ACarouselDemo macOS */,
+				EDF64D59256380F10050A86D /* ACarouselDemo macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -221,13 +224,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EDF64CA6256241520050A86D /* Resources */ = {
+		EDF64D58256380F10050A86D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EDF64CB5256241520050A86D /* Main.storyboard in Resources */,
-				EDF64CB2256241520050A86D /* Preview Assets.xcassets in Resources */,
-				EDF64CAF256241520050A86D /* Assets.xcassets in Resources */,
+				EDF64D67256380F10050A86D /* Main.storyboard in Resources */,
+				EDC9AF3F2563A19300321BC0 /* Assets.xcassets in Resources */,
+				EDF64D64256380F10050A86D /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,12 +247,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		EDF64CA4256241520050A86D /* Sources */ = {
+		EDF64D56256380F10050A86D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EDF64D3A25625B220050A86D /* ContentView.swift in Sources */,
-				EDF64CAB256241520050A86D /* AppDelegate.swift in Sources */,
+				EDF64D5D256380F10050A86D /* AppDelegate.swift in Sources */,
+				EDF64DA425638FC50050A86D /* ContentView.swift in Sources */,
+				EDC9AF3A2563982100321BC0 /* Test.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -264,10 +268,10 @@
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		EDF64CB3256241520050A86D /* Main.storyboard */ = {
+		EDF64D65256380F10050A86D /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				EDF64CB4256241520050A86D /* Base */,
+				EDF64D66256380F10050A86D /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -433,7 +437,7 @@
 			};
 			name = Release;
 		};
-		EDF64CB9256241520050A86D /* Debug */ = {
+		EDF64D6B256380F10050A86D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -511,7 +515,7 @@
 			};
 			name = Debug;
 		};
-		EDF64CBA256241520050A86D /* Release */ = {
+		EDF64D6C256380F10050A86D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -603,11 +607,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		EDF64CB8256241520050A86D /* Build configuration list for PBXNativeTarget "ACarouselDemo macOS" */ = {
+		EDF64D6A256380F10050A86D /* Build configuration list for PBXNativeTarget "ACarouselDemo macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				EDF64CB9256241520050A86D /* Debug */,
-				EDF64CBA256241520050A86D /* Release */,
+				EDF64D6B256380F10050A86D /* Debug */,
+				EDF64D6C256380F10050A86D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -619,7 +623,7 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = ACarousel;
 		};
-		EDF64D4025625B370050A86D /* ACarousel */ = {
+		EDF64D6F256381410050A86D /* ACarousel */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ACarousel;
 		};

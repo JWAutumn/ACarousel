@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  ACarouselDemo macOS
 //
-//  Created by Autumn on 2020/11/16.
+//  Created by 帝云科技 on 2020/11/17.
 //
 
 import Cocoa

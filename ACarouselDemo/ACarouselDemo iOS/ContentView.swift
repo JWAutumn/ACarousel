@@ -7,19 +7,17 @@
 
 import SwiftUI
 import ACarousel
-
-struct Item: Identifiable, Equatable {
+               
+struct Item: Identifiable {
     let id = UUID()
-    let color: Color
+    let image: Image
 }
+
+let roles = ["Luffy", "Zoro", "Sanji", "Nami", "Usopp", "Chopper", "Robin", "Franky", "Brook"]
 
 struct ContentView: View {
     
-    let items: [Item] = [Item(color: .red),
-                          Item(color: .blue),
-                          Item(color: .green),
-                          Item(color: .orange),
-                          Item(color: .purple)]
+    let items: [Item] = roles.map { Item(image: Image($0)) }
     
     @State var spacing: CGFloat = 10
     @State var headspace: CGFloat = 10
@@ -36,12 +34,14 @@ struct ContentView: View {
                       headspace: headspace,
                       sidesScaling: sidesScaling,
                       isWrap: isWrap,
-                      autoScroll: autoScroll ? .active(time) : .inactive) {  item in
-                item.color
-                    .cornerRadius(10)
-                    .overlay(Text("\(items.firstIndex(of: item)!)"))
+                      autoScroll: autoScroll ? .active(time) : .inactive) { item in
+                item.image
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 300)
+                    .cornerRadius(30)
             }
-            .frame(height: 200)
+            .frame(height: 300)
             Spacer()
             
             ControlPanel(spacing: $spacing,

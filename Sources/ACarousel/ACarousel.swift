@@ -55,7 +55,8 @@ public struct ACarousel<Data, Content> : View where Data : RandomAccessCollectio
         HStack(spacing: spacing) {
             ForEach(data) {
                 content($0)
-                    .frame(width: itemWidth(proxy), height: itemHeight(proxy, $0))
+                    .frame(width: itemWidth(proxy))
+                    .scaleEffect(x: 1, y: itemScale($0), anchor: .center)
             }
         }
         .offset(x: offsetValue(proxy))
@@ -166,18 +167,12 @@ extension ACarousel {
         itemWidth(proxy) + spacing
     }
     
-    /// height of subview
-    /// - Parameters:
-    ///   - proxy: GeometryProxy
-    ///   - item: child data
-    /// - Returns: height
-    private func itemHeight(_ proxy: GeometryProxy, _ item: Data.Element) -> CGFloat {
+    private func itemScale(_ item: Data.Element) -> CGFloat {
         guard aState.activeItem < data.count else {
             return 0
         }
-        return data[aState.activeItem].id == item.id ? proxy.size.height : proxy.size.height * sidesScaling
+        return AnyHashable(data[aState.activeItem].id) == AnyHashable(item.id) ? 1 : sidesScaling
     }
-    
     
 }
 

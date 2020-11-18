@@ -55,7 +55,7 @@ dependencies: [
 
 - Basic use: The parameters of `ACarousel` have default values, so you can simply pass in the data source and eat it ~
 ```swift
-struct Item: Identifiable, Equatable {
+struct Item: Identifiable {
     let id = UUID()
     let image: Image
 }

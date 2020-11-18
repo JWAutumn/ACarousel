@@ -58,7 +58,7 @@ dependencies: [
 
  - 基础使用：`ACarousel` 的参数有默认值，你只需要简单的传入数据源即可食用~
 ```swift
-struct Item: Identifiable, Equatable {
+struct Item: Identifiable {
     let id = UUID()
     let image: Image
 }

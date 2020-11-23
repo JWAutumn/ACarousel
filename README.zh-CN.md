@@ -2,7 +2,7 @@
 
 `SwiftUI` 旋转木马效果
 
-[English version](README.md) | 中文文档
+[English version](README.md) | 中文文档 [详细分析](https://juejin.cn/post/6898258968775245837)
 
 <p align="center">
 <img src='https://img.shields.io/badge/Swift-5.1-green?style=flat'>

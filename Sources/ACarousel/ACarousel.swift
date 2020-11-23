@@ -59,6 +59,7 @@ public struct ACarousel<Data, Content> : View where Data : RandomAccessCollectio
                     .scaleEffect(x: 1, y: itemScale($0), anchor: .center)
             }
         }
+        .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
         .offset(x: offsetValue(proxy))
         .gesture(dragGesture(proxy))
         .animation(offsetAnimation)
@@ -427,3 +428,18 @@ final private class AState: ObservableObject {
     }
 }
 
+
+@available(iOS 14.0, OSX 11.0, *)
+struct ACarousel_LibraryContent: LibraryContentProvider {
+    let Datas = Array(repeating: _Item(color: .red), count: 3)
+    @LibraryContentBuilder
+    var views: [LibraryItem] {
+        LibraryItem(ACarousel(Datas) { _ in }, title: "ACarousel", category: .control)
+        LibraryItem(ACarousel(Datas, spacing: 10, headspace: 10, sidesScaling: 0.8, isWrap: false, autoScroll: .inactive) { _ in }, title: "ACarousel full parameters", category: .control)
+    }
+    
+    struct _Item: Identifiable {
+        let id = UUID()
+        let color: Color
+    }
+}

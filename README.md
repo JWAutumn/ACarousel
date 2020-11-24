@@ -43,7 +43,7 @@ Open `Xcode`, go to `File -> Swift Packages -> Add Package Dependency` and enter
 You can also add `ACarousel` as a dependency to your `Package.swift`:
 ```swift
 dependencies: [
-  .package(url: "https://github.com/JWAutumn/ACarousel", from: "0.1.2")
+  .package(url: "https://github.com/JWAutumn/ACarousel", from: "0.1.3")
 ]
 ```
 

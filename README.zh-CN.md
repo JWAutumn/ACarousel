@@ -43,7 +43,7 @@
 也可以将 `ACarousel` 作为依赖添加项到你的 `Package.swift` 中:
 ```swift
 dependencies: [
-  .package(url: "https://github.com/JWAutumn/ACarousel", from: "0.1.2")
+  .package(url: "https://github.com/JWAutumn/ACarousel", from: "0.1.3")
 ]
 ```
 

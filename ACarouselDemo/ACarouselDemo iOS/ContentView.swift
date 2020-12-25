@@ -25,12 +25,14 @@ struct ContentView: View {
     @State var isWrap: Bool = false
     @State var autoScroll: Bool = false
     @State var time: TimeInterval = 1
+    @State var currentIndex: Int = 0
     
     var body: some View {
         VStack {
             Spacer().frame(height: 50)
             ACarousel(items,
                       spacing: spacing,
+                      activeIndex: $currentIndex,
                       headspace: headspace,
                       sidesScaling: sidesScaling,
                       isWrap: isWrap,

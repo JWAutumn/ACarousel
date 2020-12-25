@@ -28,45 +28,47 @@ typealias TimePublisher = Publishers.Autoconnect<Timer.TimerPublisher>
 @available(iOS 13.0, OSX 10.15, *)
 public struct ACarousel<Data, Content> : View where Data : RandomAccessCollection, Content : View, Data.Element : Identifiable {
     
-    public enum AutoScroll {
-        case inactive
-        case active(TimeInterval)
-    }
+//    public enum AutoScroll {
+//        case inactive
+//        case active(TimeInterval)
+//    }
     
-    private let _data: [Data.Element]
-    private let _spacing: CGFloat
-    private let _headspace: CGFloat
-    private let _isWrap: Bool
-    private let _sidesScaling: CGFloat
-    private let _autoScroll: AutoScroll
+//    private let _data: [Data.Element]
+//    private let _spacing: CGFloat
+//    private let _headspace: CGFloat
+//    private let _isWrap: Bool
+//    private let _sidesScaling: CGFloat
+//    private let _autoScroll: AutoScroll
     private let content: (Data.Element) -> Content
     
-    private var timer: TimePublisher? = nil
+//    private var timer: TimePublisher? = nil
     
-    @ObservedObject private var aState = AState()
+//    @ObservedObject private var aState = AState()
+    @ObservedObject private var aState: ACarouselViewModel<Data, Data.Element.ID>
     
     public var body: some View {
-        GeometryReader { proxy in
-            generateContent(proxy: proxy)
+        GeometryReader { proxy -> AnyView in
+            aState.viewSize = proxy.size
+            return AnyView(generateContent(proxy: proxy))
         }.clipped()
     }
     
     private func generateContent(proxy: GeometryProxy) -> some View {
-        HStack(spacing: spacing) {
-            ForEach(data) {
+        HStack(spacing: aState.spacing) {
+            ForEach(aState.data) {
                 content($0)
-                    .frame(width: itemWidth(proxy))
-                    .scaleEffect(x: 1, y: itemScale($0), anchor: .center)
+                    .frame(width: aState.itemWidth(proxy))
+                    .scaleEffect(x: 1, y: aState.itemScale($0), anchor: .center)
             }
         }
         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
-        .offset(x: offsetValue(proxy))
-        .gesture(dragGesture(proxy))
-        .animation(offsetAnimation)
-        .onReceive(timer: timer, perform: receiveTimer)
+        .offset(x: aState.offsetValue(proxy))
+        .gesture(aState.dragGesture(proxy))
+        .animation(aState.offsetAnimation)
+        .onReceive(timer: aState.timer, perform: receiveTimer)
         .onReceiveAppLifeCycle { aState.isTimerActive = $0 }
         .onReceive(aState.$activeItem) { _ in
-            offsetChanged(offsetValue(proxy), proxy: proxy)
+            aState.offsetChanged(aState.offsetValue(proxy), proxy: proxy)
         }
     }
     
@@ -91,27 +93,30 @@ extension ACarousel {
     ///   - autoScroll: A enum that define view to scroll automatically. See
     ///     ``ACarousel.AutoScroll``. default is `inactive`.
     ///   - content: The view builder that creates views dynamically.
-    public init(_ data: Data, spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: CGFloat = 0.8, isWrap: Bool = false, autoScroll: AutoScroll = .inactive,
+    public init(_ data: Data, spacing: CGFloat = 10, activeIndex: Binding<Int>, headspace: CGFloat = 10, sidesScaling: CGFloat = 0.8, isWrap: Bool = false, autoScroll: AutoScroll = .inactive,
                 @ViewBuilder content: @escaping (Data.Element) -> Content) {
         
-        self._data = data.map { $0 }
-        self._spacing = spacing
-        self._headspace = headspace
-        self._isWrap = isWrap
-        self._sidesScaling = sidesScaling
-        self._autoScroll = autoScroll
+        self.aState = ACarouselViewModel(data, spacing: spacing, activeIndex: activeIndex, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll)
         self.content = content
         
-        if !self.isWrap {
-            aState = AState(activeItem: 0)
-        }
-        if self.autoScroll.isActive {
-            timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-        }
+//        self._data = data.map { $0 }
+//        self._spacing = spacing
+//        self._headspace = headspace
+//        self._isWrap = isWrap
+//        self._sidesScaling = sidesScaling
+//        self._autoScroll = autoScroll
+//        self.content = content
+//
+//        if !self.isWrap {
+//            aState = AState(activeItem: 0)
+//        }
+//        if self.autoScroll.isActive {
+//            timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+//        }
     }
 }
 
-
+/**
 // MARK: - Private value
 @available(iOS 13.0, OSX 10.15, *)
 extension ACarousel {
@@ -176,40 +181,42 @@ extension ACarousel {
     }
     
 }
+ */
 
-
+/**
 // MARK: - Offset Method
 @available(iOS 13.0, OSX 10.15, *)
 extension ACarousel {
     
     private func offsetValue(_ proxy: GeometryProxy) -> CGFloat {
-        let activeOffset = CGFloat(aState.activeItem) * itemSize(proxy)
-        let value = defaultPadding - activeOffset + aState.dragOffset
+        let activeOffset = CGFloat(aState.activeItem) * aState.itemSize(proxy)
+        let value = aState.defaultPadding - activeOffset + aState.dragOffset
         return value
     }
     
     private func offsetChanged(_ newOffset: CGFloat, proxy: GeometryProxy) {
-        aState.animation = true
-        guard isWrap else {
+        aState.isAnimationOffset = true
+        guard aState.isWrap else {
             return
         }
-        let minOffset = defaultPadding
-        let maxOffset = (defaultPadding - CGFloat(data.count - 1) * itemSize(proxy))
+        let minOffset = aState.defaultPadding
+        let maxOffset = (aState.defaultPadding - CGFloat(aState.data.count - 1) * aState.itemSize(proxy))
         if newOffset == minOffset {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                aState.activeItem = data.count - 2
-                aState.animation.toggle()
+                aState.activeItem = aState.data.count - 2
+                aState.isAnimationOffset = false
             }
         } else if newOffset == maxOffset {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 aState.activeItem = 1
-                aState.animation.toggle()
+                aState.isAnimationOffset = false
             }
         }
     }
 }
+ */
 
-
+/***
 // MARK: - Drag Method
 @available(iOS 13.0, OSX 10.15, *)
 extension ACarousel {
@@ -225,7 +232,7 @@ extension ACarousel {
         /// Defines the maximum value of the drag
         /// Avoid dragging more than the values of multiple subviews at the end of the drag,
         /// and still only one subview is toggled
-        var offset: CGFloat = itemSize(proxy)
+        var offset: CGFloat = aState.itemSize(proxy)
         if value.translation.width > 0 {
             offset = min(offset, value.translation.width)
         } else {
@@ -242,7 +249,7 @@ extension ACarousel {
         /// At the end of the drag, if the drag value exceeds the drag threshold,
         /// the active view will be toggled
         /// default is one third of subview
-        let dragThreshold: CGFloat = itemWidth(proxy) / 3
+        let dragThreshold: CGFloat = aState.itemWidth(proxy) / 3
         
         var activeItem = aState.activeItem
         
@@ -252,10 +259,10 @@ extension ACarousel {
         if value.translation.width < -dragThreshold {
             activeItem += 1
         }
-        aState.activeItem = max(0, min(activeItem, data.count - 1))
+        aState.activeItem = max(0, min(activeItem, aState.data.count - 1))
     }
 }
-
+ */
 
 
 // MARK: - App Life Cycle
@@ -329,11 +336,11 @@ extension ACarousel {
         }
         /// increments of one and compare to the scrolling duration
         aState.activeTiming()
-        if aState.timing < autoScroll.interval {
+        if aState.timing < aState.autoScroll.interval {
             return
         }
         
-        if aState.activeItem == data.count - 1 {
+        if aState.activeItem == aState.data.count - 1 {
             /// `isWrap` is false.
             /// Revert to the first view after scrolling to the last view
             aState.activeItem = 0
@@ -346,7 +353,7 @@ extension ACarousel {
     }
 }
 
-
+/**
 // MARK: - Auto Scroll
 @available(iOS 13.0, OSX 10.15, *)
 extension ACarousel.AutoScroll {
@@ -372,8 +379,9 @@ extension ACarousel.AutoScroll {
         }
     }
 }
+ */
 
-
+/**
 // MARK: - State
 @available(iOS 13.0, OSX 10.15, *)
 final private class AState: ObservableObject {
@@ -427,19 +435,19 @@ final private class AState: ObservableObject {
         timing += 1
     }
 }
+ */
 
-
-@available(iOS 14.0, OSX 11.0, *)
-struct ACarousel_LibraryContent: LibraryContentProvider {
-    let Datas = Array(repeating: _Item(color: .red), count: 3)
-    @LibraryContentBuilder
-    var views: [LibraryItem] {
-        LibraryItem(ACarousel(Datas) { _ in }, title: "ACarousel", category: .control)
-        LibraryItem(ACarousel(Datas, spacing: 10, headspace: 10, sidesScaling: 0.8, isWrap: false, autoScroll: .inactive) { _ in }, title: "ACarousel full parameters", category: .control)
-    }
-    
-    struct _Item: Identifiable {
-        let id = UUID()
-        let color: Color
-    }
-}
+//@available(iOS 14.0, OSX 11.0, *)
+//struct ACarousel_LibraryContent: LibraryContentProvider {
+//    let Datas = Array(repeating: _Item(color: .red), count: 3)
+//    @LibraryContentBuilder
+//    var views: [LibraryItem] {
+//        LibraryItem(ACarousel(Datas) { _ in }, title: "ACarousel", category: .control)
+//        LibraryItem(ACarousel(Datas, spacing: 10, headspace: 10, sidesScaling: 0.8, isWrap: false, autoScroll: .inactive) { _ in }, title: "ACarousel full parameters", category: .control)
+//    }
+//
+//    struct _Item: Identifiable {
+//        let id = UUID()
+//        let color: Color
+//    }
+//}

@@ -2,7 +2,7 @@
 
 `SwiftUI` 旋转木马效果
 
-[English version](README.md) | 中文文档 [详细分析](https://juejin.cn/post/6898258968775245837)
+[English Version](README.md) | [详细解析](https://juejin.cn/post/6898258968775245837)
 
 <p align="center">
 <img src='https://img.shields.io/badge/Swift-5.1-green?style=flat'>
@@ -43,7 +43,7 @@
 也可以将 `ACarousel` 作为依赖添加项到你的 `Package.swift` 中:
 ```swift
 dependencies: [
-  .package(url: "https://github.com/JWAutumn/ACarousel", from: "0.1.3")
+  .package(url: "https://github.com/JWAutumn/ACarousel", from: "0.2.0")
 ]
 ```
 
@@ -80,6 +80,23 @@ struct ContentView: View {
         .frame(height: 300)
     }
 }
+```
+
+或者:
+
+```swift
+...
+var body: some View {
+    ACarousel(roles, id: \.self) { name in
+        Image(name)
+            .resizable()
+            .scaledToFill()
+            .frame(height: 300)
+            .cornerRadius(30)
+    }
+    .frame(height: 300)
+}
+...
 ```
 
 - 自定义参数：根据自身需求，你可以修改相应的参数来自定义显示样式。

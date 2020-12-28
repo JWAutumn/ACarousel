@@ -2,7 +2,7 @@
 
 A carousel view for SwiftUI
 
-English version | [中文文档](README.zh-CN.md)
+[中文文档](README.zh-CN.md)
 
 <p align="center">
 <img src='https://img.shields.io/badge/Swift-5.1-green?style=flat'>
@@ -43,7 +43,7 @@ Open `Xcode`, go to `File -> Swift Packages -> Add Package Dependency` and enter
 You can also add `ACarousel` as a dependency to your `Package.swift`:
 ```swift
 dependencies: [
-  .package(url: "https://github.com/JWAutumn/ACarousel", from: "0.1.3")
+  .package(url: "https://github.com/JWAutumn/ACarousel", from: "0.2.0")
 ]
 ```
 
@@ -78,7 +78,21 @@ struct ContentView: View {
     }
 }
 ```
-
+or:
+```swift
+...
+var body: some View {
+    ACarousel(roles, id: \.self) { name in
+        Image(name)
+            .resizable()
+            .scaledToFill()
+            .frame(height: 300)
+            .cornerRadius(30)
+    }
+    .frame(height: 300)
+}
+...
+```
 - Customize configuration: You can configure the corresponding parameters to customize the display style according to your needs.
 ```swift
  /// ...

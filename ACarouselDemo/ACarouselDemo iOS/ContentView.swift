@@ -17,8 +17,6 @@ let roles = ["Luffy", "Zoro", "Sanji", "Nami", "Usopp", "Chopper", "Robin", "Fra
 
 struct ContentView: View {
     
-    let items: [Item] = roles.map { Item(image: Image($0)) }
-    
     @State var spacing: CGFloat = 10
     @State var headspace: CGFloat = 10
     @State var sidesScaling: CGFloat = 0.8
@@ -29,15 +27,17 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            Spacer().frame(height: 50)
-            ACarousel(items,
+            Text("\(currentIndex + 1)/\(roles.count)")
+            Spacer().frame(height: 40)
+            ACarousel(roles,
+                      id: \.self,
+                      index: $currentIndex,
                       spacing: spacing,
-                      activeIndex: $currentIndex,
                       headspace: headspace,
                       sidesScaling: sidesScaling,
                       isWrap: isWrap,
-                      autoScroll: autoScroll ? .active(time) : .inactive) { item in
-                item.image
+                      autoScroll: autoScroll ? .active(time) : .inactive) { name in
+                Image(name)
                     .resizable()
                     .scaledToFill()
                     .frame(height: 300)

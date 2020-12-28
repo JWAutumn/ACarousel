@@ -24,45 +24,9 @@ import Combine
 @available(iOS 13.0, OSX 10.15, *)
 class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCollection, ID : Hashable {
     
-    
-    /// The index of the currently active subview.
-    @Published var activeItem: Int = 0 {
-        willSet {
-            if isWrap {
-                _activeIndex.wrappedValue = newValue - 1
-            } else {
-                _activeIndex.wrappedValue = newValue
-            }
-        }
-    }
-    
-    /// Offset x of the view drag.
-    @Published var dragOffset: CGFloat = .zero
-    
-    /// Is animation when view is in offset
-    var isAnimationOffset = false
-    
-    /// Define listen to the timer
-    /// Ignores listen while dragging. and listen again after the drag is over
-    var isTimerActive = true
-    
-    /// Counting of time
-    /// work when `isTimerActive` is true
-    /// Toggles the active subviewview and resets if the count is the same as
-    /// the duration of the auto scroll. Otherwise, increment one
-    var timing: TimeInterval = 0
-    
-    /// size of GeometryProxy
-    var viewSize: CGSize = .zero {
-        didSet {
-            print(viewSize)
-        }
-    }
-    
-    var timer: TimePublisher?
-    
+    /// external index
     @Binding
-    private var activeIndex: Int
+    private var index: Int
     
     private let _data: Data
     private let _dataId: KeyPath<Data.Element, ID>
@@ -70,16 +34,13 @@ class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCo
     private let _headspace: CGFloat
     private let _isWrap: Bool
     private let _sidesScaling: CGFloat
-    private let _autoScroll: AutoScroll
+    private let _autoScroll: ACarouselAutoScroll
     
-    init(_ data: Data,
-         id: KeyPath<Data.Element, ID>,
-         activeIndex: Binding<Int> = .constant(0),
-         spacing: CGFloat = 10,
-         headspace: CGFloat = 10,
-         sidesScaling: CGFloat = 0.8,
-         isWrap: Bool = false,
-         autoScroll: AutoScroll = .inactive) {
+    init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: CGFloat, isWrap: Bool, autoScroll: ACarouselAutoScroll) {
+        
+        guard index.wrappedValue < data.count else {
+            fatalError("The index should be less than the count of data ")
+        }
         
         self._data = data
         self._dataId = id
@@ -89,37 +50,61 @@ class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCo
         self._sidesScaling = sidesScaling
         self._autoScroll = autoScroll
         
-        if data.count > 0 && isWrap {
-            activeItem = activeIndex.wrappedValue + 1
+        if data.count > 1 && isWrap {
+            activeIndex = index.wrappedValue + 1
         } else {
-            activeItem = activeIndex.wrappedValue
+            activeIndex = index.wrappedValue
         }
-        self._activeIndex = activeIndex
         
-        if self.autoScroll.isActive {
-            timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        self._index = index
+    }
+    
+    
+    /// The index of the currently active subview.
+    @Published var activeIndex: Int = 0 {
+        willSet {
+            if isWrap {
+                if newValue > _data.count || newValue == 0 {
+                    return
+                }
+                index = newValue - 1
+            } else {
+                index = newValue
+            }
+        }
+        didSet {
+            changeOffset()
         }
     }
+    
+    /// Offset x of the view drag.
+    @Published var dragOffset: CGFloat = .zero
+    
+    /// size of GeometryProxy
+    var viewSize: CGSize = .zero
+    
+    
+    /// Counting of time
+    /// work when `isTimerActive` is true
+    /// Toggles the active subviewview and resets if the count is the same as
+    /// the duration of the auto scroll. Otherwise, increment one
+    private var timing: TimeInterval = 0
+    
+    /// Define listen to the timer
+    /// Ignores listen while dragging, and listen again after the drag is over
+    /// Ignores listen when App will resign active, and listen again when it become active
+    private var isTimerActive = true
+    func setTimerActive(_ active: Bool) {
+        isTimerActive = active
+    }
+    
 }
 
 
 extension ACarouselViewModel where ID == Data.Element.ID, Data.Element : Identifiable {
     
-    convenience init(_ data: Data,
-                     spacing: CGFloat = 10,
-                     activeIndex: Binding<Int>,
-                     headspace: CGFloat = 10,
-                     sidesScaling: CGFloat = 0.8,
-                     isWrap: Bool = false,
-                     autoScroll: AutoScroll = .inactive) {
-        self.init(data,
-                  id: \Data.Element.id,
-                  activeIndex: activeIndex,
-                  spacing: spacing,
-                  headspace: headspace,
-                  sidesScaling: sidesScaling,
-                  isWrap: isWrap,
-                  autoScroll: autoScroll)
+    convenience init(_ data: Data, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: CGFloat, isWrap: Bool, autoScroll: ACarouselAutoScroll) {
+        self.init(data, id: \.id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll)
     }
 }
 
@@ -139,159 +124,217 @@ extension ACarouselViewModel {
         return [_data.last!] + _data + [_data.first!] as! Data
     }
     
+    var dataId: KeyPath<Data.Element, ID> {
+        return _dataId
+    }
+    
     var spacing: CGFloat {
         return _spacing
     }
     
-    var headspace: CGFloat {
-        return _headspace
+    var offsetAnimation: Animation? {
+        guard isWrap else {
+            return .spring()
+        }
+        return isAnimatedOffset ? .spring() : .none
     }
     
-    var sidesScaling: CGFloat {
-        return max(min(_sidesScaling, 1), 0)
+    var itemWidth: CGFloat {
+        viewSize.width - defaultPadding * 2
     }
     
-    var isWrap: Bool {
+    var timer: TimePublisher? {
+        guard autoScroll.isActive else {
+            return nil
+        }
+        return Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    }
+    
+    /// Defines the scaling based on whether the item is currently active or not.
+    /// - Parameter item: The incoming item
+    /// - Returns: scaling
+    func itemScaling(_ item: Data.Element) -> CGFloat {
+        guard activeIndex < data.count else {
+            return 0
+        }
+        let activeItem = data[activeIndex as! Data.Index]
+        return activeItem[keyPath: _dataId] == item[keyPath: _dataId] ? 1 : sidesScaling
+    }
+}
+
+// MARK: - private variable
+extension ACarouselViewModel {
+    
+    private var isWrap: Bool {
         return _data.count > 1 ? _isWrap : false
     }
     
-    var autoScroll: AutoScroll {
+    private var autoScroll: ACarouselAutoScroll {
         guard _data.count > 1 else { return .inactive }
         guard case let .active(t) = _autoScroll else { return _autoScroll }
         return t > 0 ? _autoScroll : .defaultActive
     }
     
-    var offsetAnimation: Animation? {
-//        guard isWrap else {
-//            return .spring()
-//        }
-//
-//        return (activeItem == 1 || activeItem == data.count - 2) ? .none : .spring()
-        return isAnimationOffset ? .spring() : .none
+    private var defaultPadding: CGFloat {
+        return (_headspace + spacing)
     }
     
-    var defaultPadding: CGFloat {
-        return (headspace + spacing)
+    private var itemActualWidth: CGFloat {
+        itemWidth + spacing
     }
     
-    /// with of subview
-    func itemWidth(_ proxy: GeometryProxy) -> CGFloat {
-        proxy.size.width - defaultPadding * 2
+    private var sidesScaling: CGFloat {
+        return max(min(_sidesScaling, 1), 0)
     }
     
-    func itemSize(_ proxy: GeometryProxy) -> CGFloat {
-        itemWidth(proxy) + spacing
-    }
-}
-
-
-extension ACarouselViewModel where ID == Data.Element.ID, Data.Element : Identifiable {
-    func itemScale(_ item: Data.Element) -> CGFloat {
-        guard activeItem < data.count else {
-            return 0
-        }
-        return _dataId == \Data.Element.id ? 1 : sidesScaling
-    }
-}
-
-extension ACarouselViewModel {
-    
-    /// Action at the end of a view drag
-    func dragEnded() {
-        dragOffset = .zero
-        isTimerActive = true
-        resetTiming()
-    }
-    
-    /// Action at the view dragging
-    /// - Parameter value: Offset x value of the drag
-    func dragChanged(_ value: CGFloat) {
-        dragOffset = value
-        isTimerActive = false
-        isAnimationOffset = true
-    }
-    
-    /// reset counting of time
-    func resetTiming() {
-        timing = 0
-    }
-    
-    /// Time increments of one
-    func activeTiming() {
-        timing += 1
+    /// Is animated when view is in offset
+    private var isAnimatedOffset: Bool {
+        get { UserDefaults.isAnimatedOffset }
+        set { UserDefaults.isAnimatedOffset = newValue }
     }
 }
 
 // MARK: - Offset Method
 extension ACarouselViewModel {
-    
-    func offsetValue(_ proxy: GeometryProxy) -> CGFloat {
-        let activeOffset = CGFloat(activeItem) * itemSize(proxy)
-        let value = defaultPadding - activeOffset + dragOffset
-        return value
+    /// current offset value
+    var offset: CGFloat {
+        let activeOffset = CGFloat(activeIndex) * itemActualWidth
+        return defaultPadding - activeOffset + dragOffset
     }
     
-    func offsetChanged(_ newOffset: CGFloat, proxy: GeometryProxy) {
-        isAnimationOffset = true
+    /// change offset when acitveItem changes
+    private func changeOffset() {
+        isAnimatedOffset = true
         guard isWrap else {
             return
         }
-        let minOffset = defaultPadding
-        let maxOffset = (defaultPadding - CGFloat(data.count - 1) * itemSize(proxy))
-        if newOffset == minOffset {
+        
+        let minimumOffset = defaultPadding
+        let maxinumOffset = defaultPadding - CGFloat(data.count - 1) * itemActualWidth
+        
+        if offset == minimumOffset {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.activeItem = self.data.count - 2
-                self.isAnimationOffset = false
+                self.activeIndex = self.data.count - 2
+                self.isAnimatedOffset = false
             }
-        } else if newOffset == maxOffset {
+        } else if offset == maxinumOffset {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.activeItem = 1
-                self.isAnimationOffset = false
+                self.activeIndex = 1
+                self.isAnimatedOffset = false
             }
         }
     }
 }
 
-// MARK: - Drag Method
+// MARK: - Drag Gesture
 extension ACarouselViewModel {
-    func dragGesture(_ proxy: GeometryProxy) -> some Gesture {
+    /// drag gesture of view
+    var dragGesture: some Gesture {
         DragGesture()
-            .onChanged { self.dragChanged($0, proxy: proxy) }
-            .onEnded { [self] in dragEnded($0, proxy: proxy) }
+            .onChanged(dragChanged)
+            .onEnded(dragEnded)
     }
     
-    func dragChanged(_ value: DragGesture.Value, proxy: GeometryProxy) {
+    private func dragChanged(_ value: DragGesture.Value) {
+        
+        isAnimatedOffset = true
         
         /// Defines the maximum value of the drag
         /// Avoid dragging more than the values of multiple subviews at the end of the drag,
         /// and still only one subview is toggled
-        var offset: CGFloat = itemSize(proxy)
+        var offset: CGFloat = itemActualWidth
         if value.translation.width > 0 {
             offset = min(offset, value.translation.width)
         } else {
             offset = max(-offset, value.translation.width)
         }
         
-        dragChanged(offset)
+        /// set drag offset
+        dragOffset = offset
+        
+        /// stop active timer
+        isTimerActive = false
     }
     
-    func dragEnded(_ value: DragGesture.Value, proxy: GeometryProxy) {
-        dragEnded()
+    private func dragEnded(_ value: DragGesture.Value) {
+        /// reset drag offset
+        dragOffset = .zero
+        
+        /// reset timing and restart active timer
+        resetTiming()
+        isTimerActive = true
         
         /// Defines the drag threshold
         /// At the end of the drag, if the drag value exceeds the drag threshold,
         /// the active view will be toggled
         /// default is one third of subview
-        let dragThreshold: CGFloat = itemWidth(proxy) / 3
+        let dragThreshold: CGFloat = itemWidth / 3
         
-        var activeItem = self.activeItem
-        
+        var activeIndex = self.activeIndex
         if value.translation.width > dragThreshold {
-            activeItem -= 1
+            activeIndex -= 1
         }
         if value.translation.width < -dragThreshold {
-            activeItem += 1
+            activeIndex += 1
         }
-        self.activeItem = max(0, min(activeItem, data.count - 1))
+        self.activeIndex = max(0, min(activeIndex, data.count - 1))
+    }
+}
+
+// MARK: - Receive Timer
+extension ACarouselViewModel {
+    
+    /// timer change
+    func receiveTimer(_ value: Timer.TimerPublisher.Output) {
+        /// Ignores listen when `isTimerActive` is false.
+        guard isTimerActive else {
+            return
+        }
+        /// increments of one and compare to the scrolling duration
+        /// return when timing less than duration
+        activeTiming()
+        timing += 1
+        if timing < autoScroll.interval {
+            return
+        }
+        
+        if activeIndex == data.count - 1 {
+            /// `isWrap` is false.
+            /// Revert to the first view after scrolling to the last view
+            activeIndex = 0
+        } else {
+            /// `isWrap` is true.
+            /// Incremental, calculation of offset by `offsetChanged(_: proxy:)`
+            activeIndex += 1
+        }
+        resetTiming()
+    }
+    
+    
+    /// reset counting of time
+    private func resetTiming() {
+        timing = 0
+    }
+    
+    /// time increments of one
+    private func activeTiming() {
+        timing += 1
+    }
+}
+
+
+private extension UserDefaults {
+
+    private struct Keys {
+        static let isAnimatedOffset = "isAnimatedOffset"
+    }
+
+    static var isAnimatedOffset: Bool {
+        get {
+            return UserDefaults.standard.bool(forKey: Keys.isAnimatedOffset)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Keys.isAnimatedOffset)
+        }
     }
 }

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		EDC9AF3A2563982100321BC0 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC9AF392563982100321BC0 /* Test.swift */; };
 		EDC9AF3F2563A19300321BC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EDF64C97256241320050A86D /* Assets.xcassets */; };
 		EDF64C92256241310050A86D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64C91256241310050A86D /* AppDelegate.swift */; };
 		EDF64C94256241310050A86D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDF64C93256241310050A86D /* SceneDelegate.swift */; };
@@ -24,7 +23,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		EDC9AF392563982100321BC0 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		EDF64C8E256241310050A86D /* ACarouselDemo iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ACarouselDemo iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDF64C91256241310050A86D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EDF64C93256241310050A86D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -121,7 +119,6 @@
 				EDF64D68256380F10050A86D /* Info.plist */,
 				EDF64D69256380F10050A86D /* ACarouselDemo_macOS.entitlements */,
 				EDF64D62256380F10050A86D /* Preview Content */,
-				EDC9AF392563982100321BC0 /* Test.swift */,
 			);
 			path = "ACarouselDemo macOS";
 			sourceTree = "<group>";
@@ -253,7 +250,6 @@
 			files = (
 				EDF64D5D256380F10050A86D /* AppDelegate.swift in Sources */,
 				EDF64DA425638FC50050A86D /* ContentView.swift in Sources */,
-				EDC9AF3A2563982100321BC0 /* Test.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,7 +345,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "ACarouselDemo iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -419,7 +415,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = "ACarouselDemo iOS/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -30,6 +30,7 @@ struct ContentView: View {
         VStack {
             Spacer().frame(height: 30)
             ACarousel(items,
+                      index: .constant(2),
                       spacing: spacing,
                       headspace: headspace,
                       sidesScaling: sidesScaling,

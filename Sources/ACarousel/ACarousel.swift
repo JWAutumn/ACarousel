@@ -23,7 +23,8 @@ import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, *)
 public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessCollection, ID : Hashable, Content : View {
-    
+    var onItemSelected: (_: Int) -> Void = {_ in }
+
     @ObservedObject
     private var viewModel: ACarouselViewModel<Data, ID>
     private let content: (Data.Element) -> Content
@@ -35,8 +36,9 @@ public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessColle
         }.clipped()
     }
     
-    public func `onItemSelected`(index: Int) {
-        
+    public func `onItemSelected`(consumer: (_: Int) -> Void) -> some View {
+        consumer(viewModel.activeIndex)
+        return AnyView(self)
     }
     
     private func generateContent(proxy: GeometryProxy) -> some View {
@@ -49,7 +51,7 @@ public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessColle
         }
         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
         .offset(x: viewModel.offset)
-        .gesture(viewModel.dragGesture.onEnded({ _ in onItemSelected(index: viewModel.activeIndex) }))
+        .gesture(viewModel.dragGesture.onEnded({_ in onItemSelected(viewModel.activeIndex)}))
         .animation(viewModel.offsetAnimation)
         .onReceive(timer: viewModel.timer, perform: viewModel.receiveTimer)
         .onReceiveAppLifeCycle(perform: viewModel.setTimerActive)

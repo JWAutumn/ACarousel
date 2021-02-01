@@ -35,6 +35,10 @@ public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessColle
         }.clipped()
     }
     
+    public func `onItemSelected`(index: Int) {
+        
+    }
+    
     private func generateContent(proxy: GeometryProxy) -> some View {
         HStack(spacing: viewModel.spacing) {
             ForEach(viewModel.data, id: viewModel.dataId) {
@@ -45,7 +49,7 @@ public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessColle
         }
         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
         .offset(x: viewModel.offset)
-        .gesture(viewModel.dragGesture)
+        .gesture(viewModel.dragGesture.onEnded({ _ in onItemSelected(index: viewModel.activeIndex) }))
         .animation(viewModel.offsetAnimation)
         .onReceive(timer: viewModel.timer, perform: viewModel.receiveTimer)
         .onReceiveAppLifeCycle(perform: viewModel.setTimerActive)

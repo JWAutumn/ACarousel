@@ -23,7 +23,7 @@ import SwiftUI
 
 @available(iOS 13.0, OSX 10.15, *)
 public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessCollection, ID : Hashable, Content : View {
-    var onItemSelected: (_: Int) -> Void = {_ in }
+//    var onItemSelected: (_: Int) -> Void = {_ in }
 
     @ObservedObject
     private var viewModel: ACarouselViewModel<Data, ID>
@@ -51,7 +51,7 @@ public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessColle
         }
         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
         .offset(x: viewModel.offset)
-        .gesture(viewModel.dragGesture.onEnded({_ in onItemSelected(viewModel.activeIndex)}))
+        .gesture(viewModel.dragGesture)
         .animation(viewModel.offsetAnimation)
         .onReceive(timer: viewModel.timer, perform: viewModel.receiveTimer)
         .onReceiveAppLifeCycle(perform: viewModel.setTimerActive)
@@ -80,9 +80,9 @@ extension ACarousel {
     ///   - autoScroll: A enum that define view to scroll automatically. See
     ///     ``ACarouselAutoScroll``. default is `inactive`.
     ///   - content: The view builder that creates views dynamically.
-    public init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: CGFloat = 0.8, isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+    public init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, onItemSelected: @escaping (_: Int) -> Void = {_ in}, sidesScaling: CGFloat = 0.8, isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         
-        self.viewModel = ACarouselViewModel(data, id: id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll)
+        self.viewModel = ACarouselViewModel(data, id: id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, onItemSelected: onItemSelected)
         self.content = content
     }
     

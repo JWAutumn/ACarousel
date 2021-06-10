@@ -140,7 +140,7 @@ extension ACarouselViewModel {
     }
     
     var itemWidth: CGFloat {
-        viewSize.width - defaultPadding * 2
+        max(0, viewSize.width - defaultPadding * 2)
     }
     
     var timer: TimePublisher? {

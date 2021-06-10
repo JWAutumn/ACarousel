@@ -46,7 +46,7 @@ public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessColle
         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
         .offset(x: viewModel.offset)
         .gesture(viewModel.dragGesture)
-        .animation(viewModel.offsetAnimation)
+        .animation(viewModel.offsetAnimation, value: viewModel.offset)
         .onReceive(timer: viewModel.timer, perform: viewModel.receiveTimer)
         .onReceiveAppLifeCycle(perform: viewModel.setTimerActive)
     }

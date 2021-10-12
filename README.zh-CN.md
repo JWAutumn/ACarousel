@@ -133,7 +133,7 @@ struct ContentView: View {
 
 ## 维护者
 
-[@JWAutumn](https://github.com/JWAutumn)。
+[@JWAutumn](https://github.com/JWAutumn)，[@Underthestars-zhy](https://github.com/underthestars-zhy)， [@Alexander Chapliuk](https://github.com/krin-san)，[@thitran-incepit](https://github.com/thitran-incepit)。
 
 ## 如何贡献
 

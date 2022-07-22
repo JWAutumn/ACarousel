@@ -245,16 +245,31 @@ extension ACarouselViewModel {
         /// Defines the maximum value of the drag
         /// Avoid dragging more than the values of multiple subviews at the end of the drag,
         /// and still only one subview is toggled
+        ///Support RTL
+        if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+
         var offset: CGFloat = itemActualWidth
         if value.translation.width > 0 {
-            offset = min(offset, value.translation.width)
+            offset = min(-offset, value.translation.width)
         } else {
-            offset = max(-offset, value.translation.width)
+            offset = max(offset, value.translation.width)
         }
         
         /// set drag offset
-        dragOffset = offset
+        dragOffset = -offset
+        }else{
         
+            var offset: CGFloat = itemActualWidth
+            if value.translation.width > 0 {
+                offset = min(offset, value.translation.width)
+            } else {
+                offset = max(-offset, value.translation.width)
+            }
+            
+            /// set drag offset
+            dragOffset = offset
+            
+        }
         /// stop active timer
         isTimerActive = false
     }

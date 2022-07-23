@@ -250,13 +250,13 @@ extension ACarouselViewModel {
 
         var offset: CGFloat = itemActualWidth
         if value.translation.width > 0 {
-            offset = min(-offset, value.translation.width)
+            offset = -min(offset, value.translation.width)
         } else {
-            offset = max(offset, value.translation.width)
+            offset = -max(-offset, value.translation.width)
         }
         
         /// set drag offset
-        dragOffset = -offset
+        dragOffset = offset
         }else{
         
             var offset: CGFloat = itemActualWidth
@@ -287,16 +287,32 @@ extension ACarouselViewModel {
         /// At the end of the drag, if the drag value exceeds the drag threshold,
         /// the active view will be toggled
         /// default is one third of subview
-        let dragThreshold: CGFloat = itemWidth / 3
-        
-        var activeIndex = self.activeIndex
-        if value.translation.width > dragThreshold {
-            activeIndex -= 1
+        if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+            
+            let dragThreshold: CGFloat = itemWidth / 3
+            
+            var activeIndex = self.activeIndex
+            if value.translation.width > dragThreshold {
+                activeIndex += 1
+            }
+            if value.translation.width < -dragThreshold {
+                activeIndex -= 1
+            }
+            self.activeIndex = max(0, min(activeIndex, data.count - 1))
+        }else{
+            
+            let dragThreshold: CGFloat = itemWidth / 3
+            
+            var activeIndex = self.activeIndex
+            if value.translation.width > dragThreshold {
+                activeIndex -= 1
+            }
+            if value.translation.width < -dragThreshold {
+                activeIndex += 1
+            }
+            self.activeIndex = max(0, min(activeIndex, data.count - 1))
+            
         }
-        if value.translation.width < -dragThreshold {
-            activeIndex += 1
-        }
-        self.activeIndex = max(0, min(activeIndex, data.count - 1))
     }
 }
 

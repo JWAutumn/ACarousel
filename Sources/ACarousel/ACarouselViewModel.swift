@@ -41,8 +41,9 @@ class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCo
     private let _sidesScaling: ScaleMode
     private let _autoScroll: ACarouselAutoScroll
     private let _canMove: Bool
+    @Published var tapToSelect: Bool
     
-    init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: ScaleMode, isWrap: Bool, autoScroll: ACarouselAutoScroll, canMove: Bool) {
+    init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: ScaleMode, isWrap: Bool, autoScroll: ACarouselAutoScroll, canMove: Bool, tapToSelect: Bool) {
         
         guard index.wrappedValue < data.count else {
             fatalError("The index should be less than the count of data ")
@@ -56,6 +57,7 @@ class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCo
         self._sidesScaling = sidesScaling
         self._autoScroll = autoScroll
         self._canMove = canMove
+        self.tapToSelect = tapToSelect
         
         if data.count > 1 && isWrap {
             activeIndex = index.wrappedValue + 1
@@ -110,8 +112,8 @@ class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCo
 
 extension ACarouselViewModel where ID == Data.Element.ID, Data.Element : Identifiable {
     
-    convenience init(_ data: Data, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: ScaleMode, isWrap: Bool, autoScroll: ACarouselAutoScroll, canMove: Bool) {
-        self.init(data, id: \.id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove)
+    convenience init(_ data: Data, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: ScaleMode, isWrap: Bool, autoScroll: ACarouselAutoScroll, canMove: Bool, tapToSelect: Bool) {
+        self.init(data, id: \.id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove, tapToSelect: tapToSelect)
     }
 }
 
@@ -170,6 +172,21 @@ extension ACarouselViewModel {
             return activeItem[keyPath: _dataId] == item[keyPath: _dataId] ? .uniform(factor: 1) : sidesScaling
         case .nonUniform:
           return activeItem[keyPath: _dataId] == item[keyPath: _dataId] ? .nonUniform(horizontal: 1, vertical: 1) : sidesScaling
+        }
+    }
+    
+    func selectItem(_ item: Data.Element) {
+        guard activeIndex < data.count && activeIndex >= 0 else {
+            return
+        }
+        if let index = data.firstIndex(where: { $0[keyPath: _dataId] == item[keyPath: _dataId] }) {
+            let newActiveIndex = activeIndex + data.distance(from: activeIndex as! Data.Index, to: index)
+            if newActiveIndex != activeIndex && newActiveIndex >= 0 && newActiveIndex < data.count {
+                DispatchQueue.main.async {
+                    self.activeIndex = newActiveIndex
+                    self.isAnimatedOffset = false
+                }
+            }
         }
     }
 }

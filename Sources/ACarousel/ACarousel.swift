@@ -37,16 +37,26 @@ public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessColle
     
     private func generateContent(proxy: GeometryProxy) -> some View {
         HStack(spacing: viewModel.spacing) {
-            ForEach(viewModel.data, id: viewModel.dataId) {
-              switch viewModel.itemScaling($0) {
+            ForEach(viewModel.data, id: viewModel.dataId) { data in
+              switch viewModel.itemScaling(data) {
               case .uniform(let factor):
-                content($0)
+                content(data)
                     .frame(width: viewModel.itemWidth)
                     .scaleEffect(x: factor, y: factor, anchor: .center)
+                    .onTapGesture(count: 1) {
+                        if viewModel.tapToSelect {
+                            viewModel.selectItem(data)
+                        }
+                    }
               case .nonUniform(let horizontal, let vertical):
-                content($0)
-                  .frame(width: viewModel.itemWidth)
-                  .scaleEffect(x: horizontal, y: vertical, anchor: .center)
+                content(data)
+                    .frame(width: viewModel.itemWidth)
+                    .scaleEffect(x: horizontal, y: vertical, anchor: .center)
+                    .onTapGesture(count: 1) {
+                        if viewModel.tapToSelect {
+                            viewModel.selectItem(data)
+                        }
+                    }
                 
               }
             }
@@ -82,9 +92,9 @@ extension ACarousel {
     ///   - autoScroll: A enum that define view to scroll automatically. See
     ///     ``ACarouselAutoScroll``. default is `inactive`.
     ///   - content: The view builder that creates views dynamically.
-    public init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: ScaleMode = .uniform(factor: 0.8), isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, canMove: Bool = true, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+    public init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: ScaleMode = .uniform(factor: 0.8), isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, canMove: Bool = true, tapToSelect: Bool = false, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         
-        self.viewModel = ACarouselViewModel(data, id: id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove)
+        self.viewModel = ACarouselViewModel(data, id: id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove, tapToSelect: tapToSelect)
         self.content = content
     }
     
@@ -107,10 +117,12 @@ extension ACarousel where ID == Data.Element.ID, Data.Element : Identifiable {
     ///   - isWrap: Define views to scroll through in a loop, default is false.
     ///   - autoScroll: A enum that define view to scroll automatically. See
     ///     ``ACarouselAutoScroll``. default is `inactive`.
+    ///   - tapToSelect: Allows tapping on other visible items in the carousel to
+    ///      select them
     ///   - content: The view builder that creates views dynamically.
-    public init(_ data: Data, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: ScaleMode = .uniform(factor:0.8), isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, canMove: Bool = true, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+    public init(_ data: Data, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: ScaleMode = .uniform(factor:0.8), isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, canMove: Bool = true, tapToSelect: Bool = false, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         
-        self.viewModel = ACarouselViewModel(data, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove)
+        self.viewModel = ACarouselViewModel(data, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove, tapToSelect: tapToSelect)
         self.content = content
     }
     
@@ -123,7 +135,7 @@ struct ACarousel_LibraryContent: LibraryContentProvider {
     @LibraryContentBuilder
     var views: [LibraryItem] {
         LibraryItem(ACarousel(Datas) { _ in }, title: "ACarousel", category: .control)
-        LibraryItem(ACarousel(Datas, index: .constant(0), spacing: 10, headspace: 10, sidesScaling: .uniform(factor: 0.8), isWrap: false, autoScroll: .inactive) { _ in }, title: "ACarousel full parameters", category: .control)
+        LibraryItem(ACarousel(Datas, index: .constant(0), spacing: 10, headspace: 10, sidesScaling: .uniform(factor: 0.8), isWrap: false, autoScroll: .inactive, tapToSelect: false) { _ in }, title: "ACarousel full parameters", category: .control)
     }
 
     struct _Item: Identifiable {

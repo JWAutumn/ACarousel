@@ -22,6 +22,11 @@ import SwiftUI
 import Combine
 
 @available(iOS 13.0, OSX 10.15, *)
+public enum ScaleMode {
+    case nonUniform(horizontal: CGFloat, vertical: CGFloat)
+    case uniform(factor: CGFloat)
+}
+
 class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCollection, ID : Hashable {
     
     /// external index
@@ -33,11 +38,12 @@ class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCo
     private let _spacing: CGFloat
     private let _headspace: CGFloat
     private let _isWrap: Bool
-    private let _sidesScaling: CGFloat
+    private let _sidesScaling: ScaleMode
     private let _autoScroll: ACarouselAutoScroll
     private let _canMove: Bool
+    @Published var tapToSelect: Bool
     
-    init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: CGFloat, isWrap: Bool, autoScroll: ACarouselAutoScroll, canMove: Bool) {
+    init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: ScaleMode, isWrap: Bool, autoScroll: ACarouselAutoScroll, canMove: Bool, tapToSelect: Bool) {
         
         guard index.wrappedValue < data.count else {
             fatalError("The index should be less than the count of data ")
@@ -51,6 +57,7 @@ class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCo
         self._sidesScaling = sidesScaling
         self._autoScroll = autoScroll
         self._canMove = canMove
+        self.tapToSelect = tapToSelect
         
         if data.count > 1 && isWrap {
             activeIndex = index.wrappedValue + 1
@@ -105,8 +112,8 @@ class ACarouselViewModel<Data, ID>: ObservableObject where Data : RandomAccessCo
 
 extension ACarouselViewModel where ID == Data.Element.ID, Data.Element : Identifiable {
     
-    convenience init(_ data: Data, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: CGFloat, isWrap: Bool, autoScroll: ACarouselAutoScroll, canMove: Bool) {
-        self.init(data, id: \.id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove)
+    convenience init(_ data: Data, index: Binding<Int>, spacing: CGFloat, headspace: CGFloat, sidesScaling: ScaleMode, isWrap: Bool, autoScroll: ACarouselAutoScroll, canMove: Bool, tapToSelect: Bool) {
+        self.init(data, id: \.id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove, tapToSelect: tapToSelect)
     }
 }
 
@@ -155,12 +162,32 @@ extension ACarouselViewModel {
     /// Defines the scaling based on whether the item is currently active or not.
     /// - Parameter item: The incoming item
     /// - Returns: scaling
-    func itemScaling(_ item: Data.Element) -> CGFloat {
-        guard activeIndex < data.count else {
-            return 0
+    func itemScaling(_ item: Data.Element) -> ScaleMode {
+        guard activeIndex < data.count, activeIndex >= 0 else {
+            return .uniform(factor: 1.0)
         }
         let activeItem = data[activeIndex as! Data.Index]
-        return activeItem[keyPath: _dataId] == item[keyPath: _dataId] ? 1 : sidesScaling
+        switch _sidesScaling {
+        case .uniform:
+            return activeItem[keyPath: _dataId] == item[keyPath: _dataId] ? .uniform(factor: 1) : sidesScaling
+        case .nonUniform:
+          return activeItem[keyPath: _dataId] == item[keyPath: _dataId] ? .nonUniform(horizontal: 1, vertical: 1) : sidesScaling
+        }
+    }
+    
+    func selectItem(_ item: Data.Element) {
+        guard activeIndex < data.count && activeIndex >= 0 else {
+            return
+        }
+        if let index = data.firstIndex(where: { $0[keyPath: _dataId] == item[keyPath: _dataId] }) {
+            let newActiveIndex = activeIndex + data.distance(from: activeIndex as! Data.Index, to: index)
+            if newActiveIndex != activeIndex && newActiveIndex >= 0 && newActiveIndex < data.count {
+                DispatchQueue.main.async {
+                    self.activeIndex = newActiveIndex
+                    self.isAnimatedOffset = false
+                }
+            }
+        }
     }
 }
 
@@ -185,8 +212,13 @@ extension ACarouselViewModel {
         itemWidth + spacing
     }
     
-    private var sidesScaling: CGFloat {
-        return max(min(_sidesScaling, 1), 0)
+    private var sidesScaling: ScaleMode {
+      switch _sidesScaling {
+      case .nonUniform(let horizontal, let vertical):
+        return .nonUniform(horizontal: max(min(horizontal, 1), 0), vertical: max(min(vertical, 1), 0))
+      case .uniform(let factor):
+        return .uniform(factor: max(min(factor, 1), 0))
+      }
     }
     
     /// Is animated when view is in offset

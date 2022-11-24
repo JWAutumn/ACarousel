@@ -21,7 +21,7 @@ struct ContentView: View {
     
     @State var spacing: CGFloat = 10
     @State var headspace: CGFloat = 10
-    @State var sidesScaling: CGFloat = 0.8
+    @State var sidesScaling: ScaleMode = .uniform(factor: 0.8)
     @State var isWrap: Bool = false
     @State var autoScroll: Bool = false
     @State var time: TimeInterval = 1

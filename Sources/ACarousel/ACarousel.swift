@@ -36,19 +36,26 @@ public struct ACarousel<Data, ID, Content> : View where Data : RandomAccessColle
     }
     
     private func generateContent(proxy: GeometryProxy) -> some View {
-        HStack(spacing: viewModel.spacing) {
-            ForEach(viewModel.data, id: viewModel.dataId) {
-                content($0)
-                    .frame(width: viewModel.itemWidth)
-                    .scaleEffect(x: 1, y: viewModel.itemScaling($0), anchor: .center)
+        VStack {
+            let height = viewModel.showPageControl ? proxy.size.height - 16 : proxy.size.height
+            HStack(spacing: viewModel.spacing) {
+                ForEach(viewModel.data, id: viewModel.dataId) {
+                    content($0)
+                        .frame(width: viewModel.itemWidth)
+                        .scaleEffect(x: 1, y: viewModel.itemScaling($0), anchor: .center)
+                }
+            }
+            .frame(width: proxy.size.width, height: height, alignment: .leading)
+            .offset(x: viewModel.offset)
+            .gesture(viewModel.dragGesture)
+            .animation(viewModel.offsetAnimation, value: viewModel.offset)
+            .onReceive(timer: viewModel.timer, perform: viewModel.receiveTimer)
+            .onReceiveAppLifeCycle(perform: viewModel.setTimerActive)
+            
+            if viewModel.showPageControl {
+                PageControl(numberOfPages: viewModel.data.count, currentPage: $viewModel.activeIndex)
             }
         }
-        .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
-        .offset(x: viewModel.offset)
-        .gesture(viewModel.dragGesture)
-        .animation(viewModel.offsetAnimation, value: viewModel.offset)
-        .onReceive(timer: viewModel.timer, perform: viewModel.receiveTimer)
-        .onReceiveAppLifeCycle(perform: viewModel.setTimerActive)
     }
 }
 
@@ -74,9 +81,9 @@ extension ACarousel {
     ///   - autoScroll: A enum that define view to scroll automatically. See
     ///     ``ACarouselAutoScroll``. default is `inactive`.
     ///   - content: The view builder that creates views dynamically.
-    public init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: CGFloat = 0.8, isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, canMove: Bool = true, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+    public init(_ data: Data, id: KeyPath<Data.Element, ID>, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: CGFloat = 0.8, isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, canMove: Bool = true, showPageControl: Bool = false, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         
-        self.viewModel = ACarouselViewModel(data, id: id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove)
+        self.viewModel = ACarouselViewModel(data, id: id, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove, showPageControl: showPageControl)
         self.content = content
     }
     
@@ -100,9 +107,9 @@ extension ACarousel where ID == Data.Element.ID, Data.Element : Identifiable {
     ///   - autoScroll: A enum that define view to scroll automatically. See
     ///     ``ACarouselAutoScroll``. default is `inactive`.
     ///   - content: The view builder that creates views dynamically.
-    public init(_ data: Data, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: CGFloat = 0.8, isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, canMove: Bool = true, @ViewBuilder content: @escaping (Data.Element) -> Content) {
+    public init(_ data: Data, index: Binding<Int> = .constant(0), spacing: CGFloat = 10, headspace: CGFloat = 10, sidesScaling: CGFloat = 0.8, isWrap: Bool = false, autoScroll: ACarouselAutoScroll = .inactive, canMove: Bool = true, showPageControl: Bool = false, @ViewBuilder content: @escaping (Data.Element) -> Content) {
         
-        self.viewModel = ACarouselViewModel(data, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove)
+        self.viewModel = ACarouselViewModel(data, index: index, spacing: spacing, headspace: headspace, sidesScaling: sidesScaling, isWrap: isWrap, autoScroll: autoScroll, canMove: canMove, showPageControl: showPageControl)
         self.content = content
     }
     

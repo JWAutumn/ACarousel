@@ -55,6 +55,8 @@ dependencies: [
 
 - Basic use: The parameters of `ACarousel` have default values, so you can simply pass in the data source and eat it ~
 ```swift
+import ACarousel
+
 struct Item: Identifiable {
     let id = UUID()
     let image: Image
@@ -96,6 +98,8 @@ var body: some View {
 - Customize configuration: You can configure the corresponding parameters to customize the display style according to your needs.
 ```swift
  /// ...
+
+import ACarousel
 
 struct ContentView: View {
     

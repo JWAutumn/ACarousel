@@ -272,7 +272,9 @@ extension ACarouselViewModel {
         /// At the end of the drag, if the drag value exceeds the drag threshold,
         /// the active view will be toggled
         /// default is one third of subview
-        let dragThreshold: CGFloat = itemWidth / 3
+        /// Here, the original one-third has been changed to one-sixth, which, based on actual testing, results in smoother interactions.
+        //let dragThreshold: CGFloat = itemWidth / 3
+        let dragThreshold: CGFloat = itemWidth / 6
         
         var activeIndex = self.activeIndex
         if value.translation.width > dragThreshold {

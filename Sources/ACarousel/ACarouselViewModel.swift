@@ -232,13 +232,15 @@ extension ACarouselViewModel {
 extension ACarouselViewModel {
     /// drag gesture of view
     var dragGesture: some Gesture {
-        DragGesture()
+        DragGesture(minimumDistance: 20, coordinateSpace: .local)
             .onChanged(dragChanged)
             .onEnded(dragEnded)
     }
     
     private func dragChanged(_ value: DragGesture.Value) {
         guard _canMove else { return }
+        guard abs(value.translation.width) > abs(value.translation.height) else { return }
+
         
         isAnimatedOffset = true
         
